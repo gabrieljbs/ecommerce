@@ -115,10 +115,10 @@ export function CartItem({ item }: CartItemProps) {
 
             <div className="text-right">
                 <p className="font-bold text-lg text-emerald-600 dark:text-emerald-400">
-                    R$ {(item.quantity * Number(item.product.price)).toFixed(2)}
+                    {Number(item.quantity * Number(item.product.price) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </p>
                 <p className="text-xs text-zinc-400 mt-1">
-                    R$ {Number(item.product.price).toFixed(2)} cada
+                    {Number(item.product.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} cada
                 </p>
             </div>
         </div>

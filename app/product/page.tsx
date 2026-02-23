@@ -16,14 +16,14 @@ export default async function ProductPage() {
                             <div className="aspect-square relative mb-4">
                                 <Image
                                     className="object-cover rounded-md"
-                                    src={p.image || "/placeholder.svg"}
+                                    src={p.image_url || "/placeholder.svg"}
                                     alt={p.title}
                                     fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                             </div>
                             <h2 className="text-lg font-semibold mb-2">{p.title}</h2>
-                            <p className="text-emerald-600 dark:text-emerald-400 font-bold">R$ {p.price}</p>
+                            <p className="text-emerald-600 dark:text-emerald-400 font-bold">{Number(p.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
                         </Link>
                     </div>
                 ))}

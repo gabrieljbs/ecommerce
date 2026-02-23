@@ -10,6 +10,7 @@ export async function getProductBySlug(slug: string) {
 
     if (!product) return null;
 
+
     return {
         ...product,
         image: product.images[0]?.url,

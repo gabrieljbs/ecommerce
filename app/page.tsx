@@ -5,7 +5,6 @@ import { ArrowRight, ShoppingBag } from "lucide-react";
 
 export default async function Home() {
   const products = await getProducts(8);
-
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       {/* Hero Section */}
@@ -70,7 +69,7 @@ export default async function Home() {
             >
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-900 mb-4 border border-zinc-200 dark:border-zinc-800">
                 <Image
-                  src={product.image || "/placeholder.svg"}
+                  src={product.image_url || "/placeholder.svg"}
                   alt={product.title}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -90,7 +89,7 @@ export default async function Home() {
                   {product.title}
                 </h3>
                 <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                  R$ {Number(product.price).toFixed(2)}
+                  {Number(product.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </p>
               </div>
             </Link>
