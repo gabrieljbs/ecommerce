@@ -24,7 +24,7 @@ interface PixPaymentProps {
     payerEmail?: string; // prefill do email no brick
 }
 
-type Stage = "idle" | "loading" | "brick" | "qr" | "paid" | "error";
+type Stage = "idle" | "loading" | "brick" | "qr" | "waiting" | "paid" | "error";
 
 initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!, { locale: "pt-BR" });
 
@@ -61,7 +61,7 @@ export default function PixPayment({ orderId, total, orderStatus, payerEmail }: 
     }, [orderId, router]);
 
     useEffect(() => {
-        if (stage !== "qr") return;
+        if (stage !== "qr" && stage !== "waiting") return;
         const interval = setInterval(poll, 5000);
         return () => clearInterval(interval);
     }, [stage, poll]);
@@ -85,6 +85,27 @@ export default function PixPayment({ orderId, total, orderStatus, payerEmail }: 
                 >
                     Ver Pedido
                 </a>
+            </div>
+        );
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // WAITING — cartão enviado mas ainda não aprovado (in_process / pending)
+    // ══════════════════════════════════════════════════════════════════════════
+    if (stage === "waiting") {
+        return (
+            <div className="flex flex-col items-center gap-4 py-10 text-center">
+                <div className="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+                    <Loader2 size={40} className="text-amber-500 animate-spin" />
+                </div>
+                <h2 className="text-2xl font-black text-zinc-900 dark:text-white">Aguardando Confirmação</h2>
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs">
+                    Seu pagamento está sendo processado. Você será notificado assim que confirmado.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-zinc-400">
+                    <RefreshCw size={12} className="animate-spin" />
+                    Verificando automaticamente… <span className="font-mono">({pollCount})</span>
+                </div>
             </div>
         );
     }
@@ -254,7 +275,12 @@ export default function PixPayment({ orderId, total, orderStatus, payerEmail }: 
             )}
 
             <Payment
-                initialization={{ amount: total / 100 }}
+                initialization={{
+                    amount: total / 100,
+                    payer: {
+                        email: payerEmail ?? "",  // prefill do email no brick (importante para testes)
+                    },
+                }}
                 customization={{
                     paymentMethods: {
                         bankTransfer: "all",   // PIX
@@ -285,7 +311,8 @@ export default function PixPayment({ orderId, total, orderStatus, payerEmail }: 
                             if (result.status === "approved") {
                                 setStage("paid");
                             } else {
-                                setStage("qr"); // reusa o stage de "aguardando" para polling
+                                // Pendente / em análise — aguarda webhook ou polling
+                                setStage("waiting");
                             }
                         }
                     } catch (e: unknown) {

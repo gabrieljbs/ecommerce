@@ -17,21 +17,16 @@ export async function processPayment(orderId: string, formData: Record<string, u
 
     if (!order) throw new Error("Pedido não encontrado");
 
-    // Em testes, o MP exige um @testuser.com como pagador.
     const formPayer = (formData.payer as Record<string, unknown>) ?? {};
-    const isTest = !!process.env.MP_TEST_PAYER_EMAIL;
-    const payerEmail = isTest
-        ? process.env.MP_TEST_PAYER_EMAIL!
-        : (formPayer.email as string | undefined) ?? "";
+    const payerEmail = (formPayer.email as string | undefined) ?? "";
 
     console.log("[processPayment] method:", formData.payment_method_id);
     console.log("[processPayment] email:", payerEmail);
-    console.log("[processPayment] isTest:", isTest);
     console.log("[processPayment] token:", process.env.MP_ACCESS_TOKEN ?? "⚠️ UNDEFINED");
 
     const client = new MercadoPagoConfig({
         accessToken: process.env.MP_ACCESS_TOKEN!,
-        options: { idempotencyKey: `pay-${orderId}-${Date.now()}` },
+        options: { idempotencyKey: `pay-order-${orderId}` }, // fixo por pedido → evita dupla cobrança
     });
 
     const mpPayment = new MPPayment(client);
@@ -39,11 +34,11 @@ export async function processPayment(orderId: string, formData: Record<string, u
     // Monta o body baseado no método de pagamento
     const isPix = formData.payment_method_id === "pix";
 
-    // identification é obrigatório para PIX e recomendado para todos os métodos no Brasil.
-    // Em testes, use CPF fictício válido. Em produção, virá do formulário.
+    // identification é obrigatório para PIX e para pagamentos no Brasil.
+    // Virá do Payment Brick; fallback para CPF genérico caso não enviado.
     const identification = (formPayer.identification as Record<string, unknown>) ?? {
         type: "CPF",
-        number: process.env.MP_TEST_PAYER_CPF ?? "12345678909", // CPF de teste padrão do MP
+        number: "12345678909",
     };
 
     const paymentBody: Record<string, unknown> = {
@@ -51,9 +46,9 @@ export async function processPayment(orderId: string, formData: Record<string, u
         description: `Pedido #${orderId}`, // campo obrigatório pela API do Mercado Pago
         payment_method_id: formData.payment_method_id,
         payer: {
-            ...formPayer,         // dados vindos do Payment Brick (nome, etc.)
-            email: payerEmail,    // sobrescreve com o email correto (teste ou real)
-            identification,       // CPF/CNPJ obrigatório para PIX e BR
+            ...formPayer,      // dados vindos do Payment Brick (nome, email, etc.)
+            email: payerEmail, // garante que o email sempre esteja presente
+            identification,    // CPF/CNPJ obrigatório para PIX e BR
         },
         external_reference: orderId,
         ...(process.env.NEXT_PUBLIC_APP_URL ? {

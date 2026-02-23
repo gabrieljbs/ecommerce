@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { carts, orders, orderItems } from "@/db/schema";
+import { carts, orders, orderItems, cart_items } from "@/db/schema";
 import { getCartSession } from "@/lib/cart-session";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
@@ -63,6 +63,8 @@ export async function placeOrder(prevState: any, formData: FormData) {
     const discount = 0;
     const total = subtotal + shippingPrice - discount;
 
+    let newOrderId: string | null = null;
+
     try {
         await db.transaction(async (tx) => {
             // 1. Criar o pedido
@@ -97,14 +99,16 @@ export async function placeOrder(prevState: any, formData: FormData) {
                 shippingMethod: cart.shippingMethod ?? null,
             }).returning();
 
-            // 2. Criar os itens do pedido (novos campos do schema)
+            newOrderId = newOrder.id;
+
+            // 2. Criar os itens do pedido
             await tx.insert(orderItems).values(
                 cart.items.map(item => ({
                     orderId: newOrder.id,
                     productId: item.productId,
                     productTitle: item.product.title,
                     productSlug: item.product.slug ?? null,
-                    productImage: null,               // pode ser preenchido futuramente
+                    productImage: null,
                     unitPrice: item.product.price,
                     quantity: item.quantity,
                     totalPrice: item.product.price * item.quantity,
@@ -119,5 +123,6 @@ export async function placeOrder(prevState: any, formData: FormData) {
         return { error: "Erro ao processar o pedido. Tente novamente." };
     }
 
-    redirect("/orders");
+    // Redireciona para a página de pagamento com o orderId
+    redirect(`/payments?orderId=${newOrderId}`);
 }
