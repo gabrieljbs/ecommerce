@@ -1,10 +1,6 @@
 import { pgTable, uuid, text, timestamp, integer, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-
-
-
-
 export const carts = pgTable("carts", {
     id: uuid("id").defaultRandom().primaryKey(),
 
@@ -30,7 +26,6 @@ export const cart_items = pgTable("cart_items", {
     quantity: integer("quantity").notNull().default(1),
 });
 
-
 export const products = pgTable("products", {
     id: uuid("id").defaultRandom().primaryKey(),
     title: text("title").notNull(),
@@ -38,11 +33,22 @@ export const products = pgTable("products", {
     price: integer("price").notNull(),
     slug: text("slug").notNull().unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    stock: integer("stock").notNull().default(0),
     // Dimensions for shipping
     weight: integer("weight").notNull().default(300), // em gramas
     width: integer("width").notNull().default(20),  // em cm
     height: integer("height").notNull().default(4), // em cm
     length: integer("length").notNull().default(30), // em cm
+    //Preços 
+    original_price: integer("original_price").notNull(),
+    sale_price: integer("sale_price").notNull(),
+    sale_start: timestamp("sale_start"),
+    sale_end: timestamp("sale_end"),
+    sale_enabled: boolean("sale_enabled").notNull().default(false),
+    // Fiscal e Emissão NF-e
+    ncm: text("ncm"),
+    cest: text("cest"),
+    origin: integer("origin").notNull().default(0),
 });
 
 export const product_images = pgTable("product_images", {
@@ -77,21 +83,52 @@ export const cartItemsRelations = relations(cart_items, ({ one }) => ({
 }));
 
 export const banners = pgTable("banners", {
-    id: uuid("id").defaultRandom().primaryKey(),
-    imageUrl: text("image_url").notNull(),
+    id: uuid("id").primaryKey().defaultRandom(),
+
     title: text("title").notNull(),
-    link: text("link"),
-    active: boolean("active").default(true).notNull(),
-    position: integer("position").default(0).notNull(),
+
+    imageUrl: text("image_url").notNull(),
+
+    linkUrl: text("link_url"),
+
+    position: text("position").notNull(),
+    // exemplos:
+    // home_hero
+    // login_side
+    // register_side
+    // promo_top
+
+    isActive: boolean("is_active").notNull().default(true),
+
+    startsAt: timestamp("starts_at"),
+
+    endsAt: timestamp("ends_at"),
+
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const userRoleEnum = pgEnum("user_role", ["admin", "customer"]);
 
 export const users = pgTable("users", {
     id: uuid("id").defaultRandom().primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password_hash").notNull(),
+
+    // Auth & Tokens
+    emailVerified: boolean("email_verified").notNull().default(false),
+    emailVerificationToken: text("email_verification_token"),
+    emailVerificationExpires: timestamp("email_verification_expires"),
+    passwordResetToken: text("password_reset_token"),
+    passwordResetExpires: timestamp("password_reset_expires"),
+
+    role: userRoleEnum("role").notNull().default("customer"),
+    isActive: boolean("is_active").notNull().default(true),
+
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const sessions = pgTable("sessions", {
@@ -115,6 +152,23 @@ export const orderStatusEnum = pgEnum("order_status", [
     "cancelled",
 ]);
 
+export const nfeStatusEnum = pgEnum("nfe_status", [
+    "pending",
+    "processing",
+    "authorized",
+    "rejected",
+    "cancelled"
+]);
+
+export const shippingStatusEnum = pgEnum("shipping_status", [
+    "pending",
+    "cart",
+    "checkout",
+    "generated",
+    "printed",
+    "shipped",
+    "delivered"
+]);
 
 export const orders = pgTable("orders", {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -147,11 +201,19 @@ export const orders = pgTable("orders", {
     state: text("state").notNull(),
     country: text("country").default("BR"),
 
-    /* ===== Frete ===== */
+    /* ===== Frete e Logística ===== */
     shippingMethod: text("shipping_method"),
     trackingCode: text("tracking_code"),
+    shippingStatus: shippingStatusEnum("shipping_status").notNull().default("pending"),
+    shippingLabelUrl: text("shipping_label_url"),
     shippedAt: timestamp("shipped_at"),
     deliveredAt: timestamp("delivered_at"),
+
+    /* ===== NF-e ===== */
+    nfeStatus: nfeStatusEnum("nfe_status").notNull().default("pending"),
+    nfeNumber: text("nfe_number"),
+    nfeUrl: text("nfe_url"),
+    nfeXmlUrl: text("nfe_xml_url"),
 
     /* ===== Pagamento ===== */
     paymentMethod: text("payment_method"),
@@ -212,7 +274,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 // ENUMS
 export const paymentStatusEnum = pgEnum("payment_status", [
     "pending",
-    "awaiting_payment",
+    "waiting_payment",
     "paid",
     "failed",
     "refunded",
@@ -232,20 +294,38 @@ export const payments = pgTable("payments", {
         .notNull()
         .references(() => orders.id, { onDelete: "cascade" }),
 
-    gateway: text("gateway").notNull(), // mercado_pago
-    gatewayPaymentId: text("gateway_payment_id").unique(),
-
     method: paymentMethodEnum("method").notNull(),
-    status: paymentStatusEnum("status").notNull().default("pending"),
+
+    status: paymentStatusEnum("status")
+        .notNull()
+        .default("pending"),
 
     amount: integer("amount").notNull(),
+
+    gateway: text("gateway").notNull(), // mercado_pago
+
+    gatewayPaymentId: text("gateway_payment_id").unique(),
 
     // PIX
     pixQrCode: text("pix_qr_code"),
     pixQrCodeBase64: text("pix_qr_code_base64"),
 
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    // Cartão
+    cardLastFour: text("card_last_four"),
+    cardBrand: text("card_brand"),
+    installments: integer("installments"),
+
+    // Controle
+    paidAt: timestamp("paid_at"),
+    expiresAt: timestamp("expires_at"),
+
+    createdAt: timestamp("created_at")
+        .defaultNow()
+        .notNull(),
+
+    updatedAt: timestamp("updated_at")
+        .defaultNow()
+        .notNull(),
 });
 
 export const paymentsRelations = relations(payments, ({ one }) => ({

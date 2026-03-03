@@ -16,6 +16,24 @@ export async function addToCart(_prevState: unknown, formData: FormData) {
         }
 
         const productId = raw;
+        const qtyRaw = formData.get("quantity");
+        const quantityToAdd = qtyRaw ? parseInt(qtyRaw.toString(), 10) : 1;
+
+        if (quantityToAdd <= 0) {
+            return { success: false, error: "Quantidade inválida." };
+        }
+
+        const product = await db.query.products.findFirst({
+            where: (products, { eq }) => eq(products.id, productId)
+        });
+
+        if (!product) {
+            return { success: false, error: "Produto não encontrado." };
+        }
+
+        if (product.stock <= 0) {
+            return { success: false, error: "Este produto está esgotado no momento." };
+        }
 
         let sessionId = await getCartSession();
 
@@ -52,14 +70,23 @@ export async function addToCart(_prevState: unknown, formData: FormData) {
         });
 
         if (existing) {
+            const newQuantity = existing.quantity + quantityToAdd;
+            if (newQuantity > product.stock) {
+                return { success: false, error: `Desculpe, só temos ${product.stock} unidades em estoque. Você já tem ${existing.quantity} no carrinho.` };
+            }
+
             await db.update(cart_items)
-                .set({ quantity: existing.quantity + 1 })
+                .set({ quantity: newQuantity })
                 .where(eq(cart_items.id, existing.id));
         } else {
+            if (quantityToAdd > product.stock) {
+                return { success: false, error: `Desculpe, só temos ${product.stock} unidades em estoque.` };
+            }
+
             await db.insert(cart_items).values({
                 cartId: cart.id,
                 productId,
-                quantity: 1,
+                quantity: quantityToAdd,
             });
         }
 

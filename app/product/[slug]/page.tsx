@@ -36,7 +36,7 @@ export default async function ProductPage({ params }: Props) {
                             {product.description}
                         </p>
                     </div>
-                    <AddToCartButton productId={product.id} />
+                    <AddToCartButton productId={product.id} stock={product.stock} />
                 </div>
 
                 {/* Coluna 3: Entrega */}

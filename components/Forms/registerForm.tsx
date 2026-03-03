@@ -18,7 +18,7 @@ export default function RegisterForm() {
 
 
     if (state?.success) {
-        return redirect("/login");
+        return redirect("/login?check_email=true");
     }
 
     return (

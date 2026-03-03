@@ -5,6 +5,11 @@ import { users } from "@/db/schema";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
+import { auth } from "@/lib/auth";
+import { sendVerificationEmail } from "@/lib/mail";
+import { eq } from "drizzle-orm";
+import crypto from "crypto";
+
 export async function register(prevState: any, formData: FormData) {
     const cookieStore = await cookies();
     const attemptsCookie = cookieStore.get("register_attempts");
@@ -35,10 +40,18 @@ export async function register(prevState: any, formData: FormData) {
     try {
         const hashedPassword = await bcrypt.hash(password, 12);
 
+        // 1. Cria a conta do Usuário como "Não Verificado" (emailVerified: false nativo pelo SQL)
+        // E já cria o Token de segurança na própria tabela users
+        const novoToken = crypto.randomUUID();
+        const expirationDate = new Date(Date.now() + 2 * 60 * 60 * 1000); // +2 Horas
+
         const [user] = await db.insert(users).values({
             name,
             email,
             password: hashedPassword,
+            emailVerified: false,
+            emailVerificationToken: novoToken,
+            emailVerificationExpires: expirationDate,
         }).returning();
 
         if (!user) {
@@ -58,10 +71,17 @@ export async function register(prevState: any, formData: FormData) {
             };
         }
 
+        // 3. Dispara magicamente o Nodemailer (em background invisível pro usuário pra não travar tela)
+        await sendVerificationEmail(user.email, novoToken);
+
         // Sucesso: Limpa o cookie de tentativas
         cookieStore.delete("register_attempts");
 
-        return { success: true, attempts: 0 };
+        return {
+            success: true,
+            message: "Em poucos segundos um link de verificação chegará na sua caixa de entrada.", // Mudança de copy pro Frontend
+            attempts: 0
+        };
     } catch (error: any) {
         console.error("REGISTER ERROR:", error);
 

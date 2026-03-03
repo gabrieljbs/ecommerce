@@ -4,112 +4,122 @@ import { db } from "@/db";
 import { eq, desc } from "drizzle-orm";
 import { orders, payments } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { MercadoPagoConfig, Payment as MPPayment } from "mercadopago";
 
-/**
- * Processa qualquer método de pagamento do Payment Brick:
- * PIX (bank_transfer), cartão de crédito e débito.
- */
 export async function processPayment(orderId: string, formData: Record<string, unknown>) {
     const order = await db.query.orders.findFirst({
         where: eq(orders.id, orderId),
+        with: { items: true },
     });
 
     if (!order) throw new Error("Pedido não encontrado");
 
-    const formPayer = (formData.payer as Record<string, unknown>) ?? {};
-    const payerEmail = (formPayer.email as string | undefined) ?? "";
-
-    console.log("[processPayment] method:", formData.payment_method_id);
-    console.log("[processPayment] email:", payerEmail);
-    console.log("[processPayment] token:", process.env.MP_ACCESS_TOKEN ?? "⚠️ UNDEFINED");
-
-    const client = new MercadoPagoConfig({
-        accessToken: process.env.MP_ACCESS_TOKEN!,
-        options: { idempotencyKey: `pay-order-${orderId}` }, // fixo por pedido → evita dupla cobrança
+    // Prevenção de duplicidade: usar PIX pendente se já existir um
+    const existingPayment = await db.query.payments.findFirst({
+        where: eq(payments.orderId, orderId),
+        orderBy: [desc(payments.createdAt)],
     });
 
-    const mpPayment = new MPPayment(client);
+    if (existingPayment && existingPayment.status === "waiting_payment" && existingPayment.pixQrCode) {
+        console.log("[PagSeguro Request] Reaproveitando PIX pendente existente no banco.");
+        return {
+            status: existingPayment.status,
+            qrCode: existingPayment.pixQrCode,
+            gatewayId: existingPayment.gatewayPaymentId,
+        };
+    }
 
-    // Monta o body baseado no método de pagamento
-    const isPix = formData.payment_method_id === "pix";
+    const token = process.env.PAGSEGURO_TOKEN;
+    const baseUrl = process.env.PAGSEGURO_BASE_URL;
 
-    // identification é obrigatório para PIX e para pagamentos no Brasil.
-    // Virá do Payment Brick; fallback para CPF genérico caso não enviado.
-    const identification = (formPayer.identification as Record<string, unknown>) ?? {
-        type: "CPF",
-        number: "12345678909",
-    };
+    if (!token) throw new Error("PAGSEGURO_TOKEN não configurado.");
 
-    const paymentBody: Record<string, unknown> = {
-        transaction_amount: order.total / 100, // centavos → reais
-        description: `Pedido #${orderId}`, // campo obrigatório pela API do Mercado Pago
-        payment_method_id: formData.payment_method_id,
-        payer: {
-            ...formPayer,      // dados vindos do Payment Brick (nome, email, etc.)
-            email: payerEmail, // garante que o email sempre esteja presente
-            identification,    // CPF/CNPJ obrigatório para PIX e BR
+    // No PagSeguro nós mesmos vamos criar o objeto 'payer' por via de form HTML no frontend
+    const payer = (formData.payer as Record<string, any>) ?? {};
+    const method = formData.payment_method_id as string;
+    const cleanCpf = (payer.cpf || "11111111111").replace(/\D/g, "");
+
+    const body: Record<string, any> = {
+        reference_id: `order-${order.id}`,
+        customer: {
+            name: payer.name || "Cliente Teste",
+            email: payer.email || process.env.PAGSEGURO_EMAIL || "teste@sandbox.pagseguro.com.br",
+            tax_id: cleanCpf,
+            phones: [{ country: "55", area: "11", number: "999999999", type: "MOBILE" }]
         },
-        external_reference: orderId,
-        ...(process.env.NEXT_PUBLIC_APP_URL ? {
-            notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercado-pago`,
-        } : {}),
+        items: order.items.map(item => ({
+            reference_id: `item-${item.id}`,
+            name: item.productTitle,
+            quantity: item.quantity,
+            unit_amount: item.unitPrice,
+        })),
+        notification_urls: process.env.NEXT_PUBLIC_APP_URL
+            ? [`${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/pagseguro`]
+            : [],
     };
 
-    // Campos extras para cartão
-    if (!isPix) {
-        paymentBody.token = formData.token;
-        paymentBody.installments = formData.installments ?? 1;
-        paymentBody.issuer_id = formData.issuer_id;
+    if (method === "pix") {
+        body.qr_codes = [{
+            amount: { value: order.total },
+            expiration_date: new Date(Date.now() + 3600000).toISOString() // 1 hora
+        }];
     }
 
-    console.log("[processPayment] body:", JSON.stringify(paymentBody, null, 2));
+    console.log("[PagSeguro Request] ", JSON.stringify(body, null, 2));
 
+    const cleanUrl = baseUrl?.endsWith('/') ? baseUrl?.slice(0, -1) : baseUrl;
+
+    const response = await fetch(`${cleanUrl}/orders`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "x-idempotency-key": `pay-${orderId}-${Date.now()}`
+        },
+        body: JSON.stringify(body),
+    });
+
+    const textResponse = await response.text();
     let data;
+
     try {
-        data = await mpPayment.create({ body: paymentBody });
-    } catch (err: unknown) {
-        console.error("[MP SDK Error]", JSON.stringify(err, null, 2));
-        const msg = (err as { message?: string })?.message ?? JSON.stringify(err);
-        throw new Error(`Mercado Pago: ${msg}`);
+        data = JSON.parse(textResponse);
+    } catch (e) {
+        console.error("[PagSeguro API Text Error]", textResponse);
+        throw new Error(`Falha de comunicação: recebi "${textResponse.substring(0, 30)}..." do PagSeguro.`);
     }
 
-    console.log("[MP Payment] id:", data.id, "status:", data.status);
+    if (!response.ok) {
+        console.error("[PagSeguro API Error Raw]", JSON.stringify(data, null, 2));
+        const errorMessage = data.error_messages ? data.error_messages[0].description : "Erro na cobrança PagSeguro";
+        throw new Error(`Erro PagSeguro: ${errorMessage}`);
+    }
 
-    // QR Code (apenas PIX)
-    const qrCode: string | null =
-        data.point_of_interaction?.transaction_data?.qr_code ?? null;
-    const qrCodeBase64: string | null =
-        data.point_of_interaction?.transaction_data?.qr_code_base64 ?? null;
+    let qrCode = null;
+    let qrCodeBase64 = null;
+    if (method === "pix" && data.qr_codes && data.qr_codes.length > 0) {
+        qrCode = data.qr_codes[0].text;
+    }
 
-    // Salva o registro no banco
+    const newStatus = "waiting_payment";
+
     await db.insert(payments).values({
         orderId: order.id,
         amount: order.total,
-        method: isPix ? "pix" : "credit_card",
-        status: data.status === "approved" ? "paid" : "awaiting_payment",
-        gateway: "mercado_pago",
-        gatewayPaymentId: String(data.id),
+        method: method === "pix" ? "pix" : "credit_card",
+        status: newStatus,
+        gateway: "pagseguro",
+        gatewayPaymentId: data.id,
         pixQrCode: qrCode,
-        pixQrCodeBase64: qrCodeBase64,
-    }).onConflictDoNothing();
-
-    // Se cartão aprovado na hora, atualiza o pedido
-    if (data.status === "approved") {
-        await db.update(orders)
-            .set({ status: "paid" })
-            .where(eq(orders.id, orderId));
-    }
+        pixQrCodeBase64: null,
+    }).onConflictDoNothing({ target: payments.gatewayPaymentId });
 
     return {
-        status: data.status,
+        status: newStatus,
         qrCode,
-        qrCodeBase64,
-        mpPaymentId: String(data.id),
+        gatewayId: data.id,
     };
 }
 
-/** Busca o status do último pagamento de um pedido (polling) */
 export async function checkPaymentStatus(orderId: string) {
     const user = await auth();
     if (!user) throw new Error("Não autorizado");
@@ -132,7 +142,6 @@ export async function checkPaymentStatus(orderId: string) {
     };
 }
 
-/** Busca o pedido para exibir na página de pagamento (verificando o dono) */
 export async function getOrderForPayment(orderId: string) {
     const user = await auth();
     if (!user) return null;
@@ -144,4 +153,18 @@ export async function getOrderForPayment(orderId: string) {
 
     if (!order || order.userId !== user.id) return null;
     return order;
+}
+
+export async function mockPaySandboxPix(orderId: string) {
+    if (process.env.NODE_ENV !== "development") throw new Error("Not allowed outside DEV environment.");
+
+    await db.update(orders)
+        .set({ status: "paid" })
+        .where(eq(orders.id, orderId));
+
+    await db.update(payments)
+        .set({ status: "paid" })
+        .where(eq(payments.orderId, orderId));
+
+    return { success: true };
 }

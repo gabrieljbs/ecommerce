@@ -70,7 +70,15 @@ export async function login(prevState: any, formData: FormData) {
             };
         }
 
-        // --- SUCESSO ---
+        // --- SUCESSO DE SENHA ---
+
+        if (!user.emailVerified) {
+            return {
+                success: false,
+                error: "Por favor, ative sua conta através do link que enviamos no seu e-mail antes de fazer login.",
+                attempts: currentAttempts // Aviso de segurança não conta como quebra de senha
+            };
+        }
 
         // 1. Criar Sessão no Banco
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 dias

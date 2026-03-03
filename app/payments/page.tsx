@@ -4,7 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { getOrderForPayment } from "@/action/payment";
-import PixPayment from "@/components/Payment/PixPayment";
+import PagSeguroPayment from "@/components/Payment/PixPayment";
 import {
     ArrowLeft,
     ShoppingBag,
@@ -112,7 +112,7 @@ export default async function PaymentsPage({
 
                     {/* Card — Pagamento PIX */}
                     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
-                        <PixPayment
+                        <PagSeguroPayment
                             orderId={order.id}
                             total={order.total}
                             orderStatus={order.status}
