@@ -19,7 +19,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
             <div className="w-full text-center p-8 bg-red-50 border border-red-100 rounded-xl">
                 <h3 className="text-red-800 font-bold mb-2">Token Ausente</h3>
                 <p className="text-red-600 text-sm">Nenhum código de segurança foi recebido no link. Acesse o E-mail de redefinição e tente clicar novamente nele ou solicite um novo.</p>
-                <Link href="/forgot-password" className="mt-4 inline-block text-blue-600 hover:underline font-bold text-sm">Voltar e Solicitar Novo Link</Link>
+                <Link href="/forgot-password" className="mt-4 inline-block text-primary-600 hover:underline font-bold text-sm">Voltar e Solicitar Novo Link</Link>
             </div>
         );
     }
@@ -38,7 +38,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
                 </div>
                 <Link
                     href="/login"
-                    className="inline-flex justify-center w-full py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition"
+                    className="inline-flex justify-center w-full py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 transition"
                 >
                     Entrar com Nova Senha
                 </Link>
@@ -70,7 +70,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
                         required
                         minLength={6}
                         placeholder="Nova senha secreta"
-                        className="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
+                        className="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500">
                         <button type="button" onClick={() => setIsEyeOpen(!isEyeOpen)} tabIndex={-1} className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
@@ -89,7 +89,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
                 <button
                     type="submit"
                     disabled={isPending}
-                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/20"
+                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary-500/20"
                 >
                     {isPending ? (
                         <div className="flex items-center gap-2">

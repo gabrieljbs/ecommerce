@@ -86,7 +86,7 @@ export default function CheckoutStepper({
                     return (
                         <div key={id} className="flex items-center flex-1 min-w-0">
                             <div className="flex items-center gap-2 min-w-0">
-                                <div className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all ${isDone ? "bg-emerald-500 text-white" :
+                                <div className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all ${isDone ? "bg-primary-500 text-white" :
                                     isActive ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900" :
                                         "bg-zinc-100 dark:bg-zinc-800 text-zinc-400"
                                     }`}>
@@ -341,7 +341,7 @@ export default function CheckoutStepper({
                         ))}
                         <div className="pt-3 border-t border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
                             <span className="font-bold text-zinc-900 dark:text-white">Total</span>
-                            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                            <span className="text-xl font-black text-primary-600 dark:text-primary-400">
                                 {Number(total / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                             </span>
                         </div>
@@ -359,7 +359,7 @@ export default function CheckoutStepper({
                             Voltar
                         </button>
                         <button type="submit" disabled={isPending}
-                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-70 text-white py-4 rounded-xl font-bold transition-colors shadow-lg shadow-emerald-200 dark:shadow-none flex items-center justify-center gap-2">
+                            className="flex-1 bg-primary-600 hover:bg-primary-700 disabled:opacity-70 text-white py-4 rounded-xl font-bold transition-colors shadow-lg shadow-primary-200 dark:shadow-none flex items-center justify-center gap-2">
                             {isPending ? <Loader2 className="animate-spin" size={20} /> : "Confirmar Pedido"}
                         </button>
                     </div>

@@ -17,7 +17,7 @@ export default async function ProfilePage() {
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 md:p-8">
             <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary-600 dark:text-primary-400">
                     <Package size={20} />
                 </div>
                 <div>
@@ -35,7 +35,7 @@ export default async function ProfilePage() {
                     </p>
                     <Link
                         href="/product"
-                        className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+                        className="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
                     >
                         Ver Produtos
                     </Link>
@@ -108,7 +108,7 @@ export default async function ProfilePage() {
                             <div className="bg-white dark:bg-zinc-900 px-6 py-3 border-t border-zinc-200 dark:border-zinc-800">
                                 <Link
                                     href={`/profile/pedido/${order.id}`}
-                                    className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1"
+                                    className="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 flex items-center gap-1"
                                 >
                                     Ver detalhes completos do pedido
                                     <ChevronRight size={16} />

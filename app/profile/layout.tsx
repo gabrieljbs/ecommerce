@@ -15,16 +15,6 @@ export default async function ProfileLayout({ children }: { children: ReactNode 
 
     return (
         <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pb-12">
-
-            <div className="bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800 pt-8 pb-12">
-                <div className="container mx-auto px-4">
-                    <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-white">Minha Conta</h1>
-                    <p className="text-zinc-500 dark:text-zinc-400 mt-2">
-                        Gerencie seus pedidos, dados pessoais e endereços.
-                    </p>
-                </div>
-            </div>
-
             <div className="container mx-auto px-4 mt-8">
                 <div className="flex flex-col md:flex-row gap-8">
 
@@ -35,7 +25,7 @@ export default async function ProfileLayout({ children }: { children: ReactNode 
                                 <li>
                                     <Link
                                         href="/profile"
-                                        className="flex items-center gap-3 px-6 py-4 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                                        className="flex items-center gap-3 px-6 py-4 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                                     >
                                         <Package size={20} />
                                         <span className="font-medium">Meus Pedidos</span>
@@ -44,7 +34,7 @@ export default async function ProfileLayout({ children }: { children: ReactNode 
                                 <li>
                                     <Link
                                         href="/profile/dados"
-                                        className="flex items-center gap-3 px-6 py-4 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                                        className="flex items-center gap-3 px-6 py-4 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                                     >
                                         <User size={20} />
                                         <span className="font-medium">Meus Dados</span>
@@ -53,7 +43,7 @@ export default async function ProfileLayout({ children }: { children: ReactNode 
                                 <li>
                                     <Link
                                         href="/profile/enderecos"
-                                        className="flex items-center gap-3 px-6 py-4 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                                        className="flex items-center gap-3 px-6 py-4 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                                     >
                                         <MapPin size={20} />
                                         <span className="font-medium">Endereços</span>

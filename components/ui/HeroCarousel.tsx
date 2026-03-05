@@ -86,7 +86,7 @@ export function HeroCarousel({ banners }: { banners: Banner[] }) {
                 className="w-full h-full"
             >
                 {banners.map((banner, index) => (
-                    <SwiperSlide key={banner.id} className="relative w-full py-20 lg:py-32 flex items-center min-h-[50vh] xl:min-h-[60vh]">
+                    <SwiperSlide key={banner.id} className="relative w-full aspect-[2752/1536] flex items-center">
 
                         {/* Background Image Setup for this specific slide */}
                         <div className="absolute inset-0 w-full h-full">
@@ -94,14 +94,15 @@ export function HeroCarousel({ banners }: { banners: Banner[] }) {
                                 src={banner.imageUrl}
                                 alt={banner.title}
                                 fill
-                                className="object-cover opacity-40 mix-blend-overlay"
+                                className="object-cover opacity-80 mix-blend-overlay"
                                 priority={index === 0}
                             />
                         </div>
                         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20 pointer-events-none"></div>
 
                         {/* Front Content Layer */}
-                        <div className="container mx-auto px-4 relative z-10 w-full">
+                        {/* Ficara comentato ate que eu defina o stilo do carrossel */}
+                        {/* <div className="container mx-auto px-4 relative z-10 w-full">
                             <div className="max-w-3xl mx-auto text-center space-y-8">
                                 <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg mb-6">
                                     {banner.title}
@@ -120,7 +121,7 @@ export function HeroCarousel({ banners }: { banners: Banner[] }) {
                                     </Link>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                     </SwiperSlide>
                 ))}

@@ -33,7 +33,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
                             name="email"
                             required
                             placeholder="seu@email.com"
-                            className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
+                            className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
                         />
                     </div>
 
@@ -46,7 +46,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
                             name="password"
                             required
                             placeholder="Sua senha"
-                            className="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
+                            className="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
                         />
                         <div className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500">
                             <button type="button" onClick={() => setIsEyeOpen(!isEyeOpen)} tabIndex={-1} className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
@@ -57,7 +57,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
                 </div>
 
                 <div className="flex justify-end">
-                    <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline">
+                    <Link href="/forgot-password" className="text-sm font-medium text-primary-600 hover:text-primary-500 hover:underline">
                         Esqueceu sua senha?
                     </Link>
                 </div>
@@ -72,7 +72,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
                 <button
                     type="submit"
                     disabled={isPending}
-                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0"
+                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary-500/20 hover:shadow-primary-500/40 hover:-translate-y-0.5 active:translate-y-0"
                 >
                     {isPending ? (
                         <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
 
             <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
                 Ainda não tem uma conta?{" "}
-                <Link href="/register" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors hover:underline decoration-2 underline-offset-4">
+                <Link href="/register" className="font-semibold text-primary-600 hover:text-primary-500 transition-colors hover:underline decoration-2 underline-offset-4">
                     Cadastre-se
                 </Link>
             </p>

@@ -112,7 +112,7 @@ export default function CheckoutForm({ addressData, cartCep }: CheckoutFormProps
                 <button
                     type="submit"
                     disabled={isPending}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-70 text-white py-4 rounded-xl font-bold transition-colors shadow-lg shadow-emerald-200 dark:shadow-none mb-4 flex items-center justify-center"
+                    className="w-full bg-primary-600 hover:bg-primary-700 disabled:opacity-70 text-white py-4 rounded-xl font-bold transition-colors shadow-lg shadow-primary-200 dark:shadow-none mb-4 flex items-center justify-center"
                 >
                     {isPending ? <Loader2 className="animate-spin" /> : "Confirmar Pedido"}
                 </button>

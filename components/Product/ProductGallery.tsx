@@ -32,7 +32,7 @@ export function ProductGallery({ images, productTitle }: ProductGalleryProps) {
 
     if (!selectedImage) {
         return (
-            <div className="aspect-square relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+            <div className="aspect-[864/1184] relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
                 <span className="text-zinc-400">Sem imagem</span>
             </div>
         );
@@ -41,14 +41,14 @@ export function ProductGallery({ images, productTitle }: ProductGalleryProps) {
     return (
         <div className="flex flex-col gap-4">
             {/* Imagem Principal */}
-            <div className="aspect-square relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800">
+            <div className="aspect-[864/1184] relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800">
                 <Image
                     src={selectedImage.url || "/placeholder.svg"}
                     alt={selectedImage.alt || productTitle}
                     fill
                     className="object-cover"
                     priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes="(max-width: 640px) 100vw, 320px "
                 />
             </div>
 

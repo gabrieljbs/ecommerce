@@ -24,7 +24,7 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
     return (
         <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen">
             {/* Header / Breadcrumb Banner */}
-            <div className="bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800">
+            <div className="bg-white dark:bg-black border-b-2 border-primary-500 dark:border-primary-600">
                 <div className="container mx-auto px-4 py-8 md:py-12">
                     <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-4">
                         Toda a Coleção
@@ -54,7 +54,7 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
                             <div>
                                 <h3 className="font-bold text-lg mb-4 text-zinc-900 dark:text-white">Categorias</h3>
                                 <ul className="space-y-3 font-medium text-zinc-600 dark:text-zinc-400">
-                                    <li><Link href="/product" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex justify-between">Todos <span className="bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-xs">{products.length}</span></Link></li>
+                                    <li><Link href="/product" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors flex justify-between">Todos <span className="bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-xs">{products.length}</span></Link></li>
                                     <li><Link href="/product?onSale=true" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex justify-between font-bold">Ofertas</Link></li>
                                 </ul>
                             </div>
@@ -92,7 +92,7 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
                                 const saleActive = isSaleActive(p);
 
                                 return (
-                                    <Link key={p.id} href={`/product/${p.slug}`} className="group relative border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 rounded-2xl p-3 bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all block">
+                                    <Link key={p.id} href={`/product/${p.slug}`} className="group relative border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all block overflow-hidden">
 
                                         {/* Analytics / Metric Badge (Visual enhancement requested by user) */}
                                         <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
@@ -101,48 +101,50 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
                                                     Promoção
                                                 </span>
                                             )}
-                                            <span className="flex items-center gap-1 bg-white/90 dark:bg-black/90 text-zinc-900 dark:text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm backdrop-blur-md w-fit">
-                                                🔥 Mais Vendido
-                                            </span>
                                             {saleActive && p.sale_end && (
                                                 <CountdownTimer endDate={p.sale_end} />
                                             )}
                                         </div>
 
-                                        <div className="aspect-square relative mb-4 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-950">
+                                        <div className="aspect-[864/1184] relative mb-4 bg-zinc-100 dark:bg-zinc-950">
                                             <Image
                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                 src={p.image_url || "/placeholder.svg"}
                                                 alt={p.title}
                                                 fill
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                sizes="(max-width: 640px) 100vw, 320px"
                                             />
                                         </div>
 
-                                        <div className="px-1 space-y-1">
-                                            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{p.title}</h2>
+                                        <div className="px-5 pb-5 space-y-1">
+                                            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{p.title}</h2>
 
-                                            <div className="flex items-center gap-2 pt-1">
-                                                {saleActive ? (
-                                                    <>
-                                                        <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                                                            {Number(p.sale_price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                            <div className="flex flex-col gap-0.5 pt-1">
+                                                <div className="flex items-center gap-2">
+                                                    {saleActive ? (
+                                                        <>
+                                                            <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                                                                {Number(p.sale_price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                            </p>
+                                                            <p className="text-sm font-medium text-zinc-400 dark:text-zinc-500 line-through">
+                                                                {Number((p.original_price > 0 ? p.original_price : p.price) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                            </p>
+                                                        </>
+                                                    ) : (
+                                                        <p className="text-xl font-extrabold text-zinc-900 dark:text-white">
+                                                            {Number(p.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                         </p>
-                                                        <p className="text-sm font-medium text-zinc-400 dark:text-zinc-500 line-through">
-                                                            {Number((p.original_price > 0 ? p.original_price : p.price) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                        </p>
-                                                    </>
-                                                ) : (
-                                                    <p className="text-xl font-extrabold text-zinc-900 dark:text-white">
-                                                        {Number(p.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                    </p>
-                                                )}
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                                                    em até <strong className="text-zinc-700 dark:text-zinc-300">6x de {Number((saleActive ? p.sale_price : p.price) / 100 / 6).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong> s/ juros
+                                                </p>
                                             </div>
                                         </div>
 
                                         {/* Interactive Hover Area (Cart Icon) */}
                                         <div className="absolute bottom-6 right-6 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                                            <span className="bg-indigo-600 p-2 rounded-full shadow-lg flex text-white">
+                                            <span className="bg-primary-600 p-2 rounded-full shadow-lg flex text-white">
                                                 <ArrowRight className="w-5 h-5" />
                                             </span>
                                         </div>

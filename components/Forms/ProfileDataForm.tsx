@@ -25,7 +25,7 @@ export default function ProfileDataForm({ user }: { user: { id: string, name: st
                         <ArrowLeft size={20} />
                     </Link>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary-600 dark:text-primary-400">
                     <User size={20} />
                 </div>
                 <div>
@@ -65,7 +65,7 @@ export default function ProfileDataForm({ user }: { user: { id: string, name: st
                                 id="name"
                                 defaultValue={user.name}
                                 required
-                                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-600"
+                                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-600"
                             />
                         </div>
 
@@ -110,7 +110,7 @@ export default function ProfileDataForm({ user }: { user: { id: string, name: st
                                 type="password"
                                 name="current_password"
                                 id="current_password"
-                                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-600"
+                                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-600"
                             />
                         </div>
 
@@ -123,7 +123,7 @@ export default function ProfileDataForm({ user }: { user: { id: string, name: st
                                     type="password"
                                     name="new_password"
                                     id="new_password"
-                                    className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-600"
+                                    className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-600"
                                 />
                             </div>
                             <div>
@@ -134,7 +134,7 @@ export default function ProfileDataForm({ user }: { user: { id: string, name: st
                                     type="password"
                                     name="confirm_password"
                                     id="confirm_password"
-                                    className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-600"
+                                    className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-600"
                                 />
                             </div>
                         </div>
@@ -144,7 +144,7 @@ export default function ProfileDataForm({ user }: { user: { id: string, name: st
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isPending ? 'Salvando...' : 'Salvar Alterações'}
                         </button>

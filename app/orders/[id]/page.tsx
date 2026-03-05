@@ -34,7 +34,7 @@ const STATUS_ORDER = ["awaiting_payment", "paid", "shipped", "delivered"];
 const STATUS_BADGE: Record<string, { label: string; bg: string; text: string; dot: string }> = {
     awaiting_payment: { label: "Aguardando Pagamento", bg: "bg-amber-50 dark:bg-amber-950/30", text: "text-amber-700 dark:text-amber-400", dot: "bg-amber-500" },
     paid: { label: "Pago", bg: "bg-emerald-50 dark:bg-emerald-950/30", text: "text-emerald-700 dark:text-emerald-400", dot: "bg-emerald-500" },
-    shipped: { label: "Enviado", bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-700 dark:text-blue-400", dot: "bg-blue-500" },
+    shipped: { label: "Enviado", bg: "bg-primary-50 dark:bg-primary-950/30", text: "text-primary-700 dark:text-primary-400", dot: "bg-primary-500" },
     delivered: { label: "Entregue", bg: "bg-emerald-50 dark:bg-emerald-950/30", text: "text-emerald-700 dark:text-emerald-400", dot: "bg-emerald-500" },
     cancelled: { label: "Cancelado", bg: "bg-red-50 dark:bg-red-950/30", text: "text-red-700 dark:text-red-400", dot: "bg-red-500" },
 };

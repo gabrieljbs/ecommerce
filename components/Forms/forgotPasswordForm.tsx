@@ -20,8 +20,8 @@ export default function ForgotPasswordForm() {
     if (sent) {
         return (
             <div className="w-full text-center space-y-6">
-                <div className="mx-auto w-16 h-16 bg-blue-50 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
-                    <Mail className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <div className="mx-auto w-16 h-16 bg-primary-50 dark:bg-primary-900/40 rounded-full flex items-center justify-center">
+                    <Mail className="w-8 h-8 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Verifique seu E-mail</h2>
@@ -31,7 +31,7 @@ export default function ForgotPasswordForm() {
                 </div>
                 <Link
                     href="/login"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-500 hover:underline"
                 >
                     <ArrowLeft size={16} />
                     Voltar para o Login
@@ -61,7 +61,7 @@ export default function ForgotPasswordForm() {
                         name="email"
                         required
                         placeholder="seu@email.com"
-                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
+                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
                     />
                 </div>
 
@@ -75,7 +75,7 @@ export default function ForgotPasswordForm() {
                 <button
                     type="submit"
                     disabled={isPending}
-                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0"
+                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary-500/20 hover:shadow-primary-500/40 hover:-translate-y-0.5 active:translate-y-0"
                 >
                     {isPending ? (
                         <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export default function ForgotPasswordForm() {
 
             <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
                 Lembrou a senha?{" "}
-                <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors hover:underline decoration-2 underline-offset-4">
+                <Link href="/login" className="font-semibold text-primary-600 hover:text-primary-500 transition-colors hover:underline decoration-2 underline-offset-4">
                     Voltar ao Login
                 </Link>
             </p>

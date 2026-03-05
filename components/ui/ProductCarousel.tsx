@@ -87,25 +87,30 @@ export function ProductCarousel({ products }: { products: any[] }) {
 
                                     <div className="px-1 space-y-1 flex-1 flex flex-col justify-between">
                                         <div>
-                                            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 group-hover/card:text-indigo-600 dark:group-hover/card:text-indigo-400 transition-colors">
+                                            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 group-hover/card:text-primary-600 dark:group-hover/card:text-primary-400 transition-colors">
                                                 {p.title}
                                             </h3>
 
-                                            <div className="flex items-center gap-2 pt-1">
-                                                {saleActive ? (
-                                                    <>
-                                                        <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                                                            {Number(p.sale_price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                            <div className="flex flex-col gap-0.5 pt-1">
+                                                <div className="flex items-center gap-2">
+                                                    {saleActive ? (
+                                                        <>
+                                                            <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                                                                {Number(p.sale_price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                            </p>
+                                                            <p className="text-sm font-medium text-zinc-400 dark:text-zinc-500 line-through">
+                                                                {Number((p.original_price > 0 ? p.original_price : p.price) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                            </p>
+                                                        </>
+                                                    ) : (
+                                                        <p className="text-xl font-extrabold text-zinc-900 dark:text-white">
+                                                            {Number(p.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                         </p>
-                                                        <p className="text-sm font-medium text-zinc-400 dark:text-zinc-500 line-through">
-                                                            {Number((p.original_price > 0 ? p.original_price : p.price) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                        </p>
-                                                    </>
-                                                ) : (
-                                                    <p className="text-xl font-extrabold text-zinc-900 dark:text-white">
-                                                        {Number(p.price / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                    </p>
-                                                )}
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                                                    em até <strong className="text-zinc-700 dark:text-zinc-300">6x de {Number((saleActive ? p.sale_price : p.price) / 100 / 6).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong> s/ juros
+                                                </p>
                                             </div>
                                         </div>
 

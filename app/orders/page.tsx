@@ -37,9 +37,9 @@ const STATUS_CONFIG = {
     shipped: {
         label: "Enviado",
         icon: Truck,
-        bg: "bg-blue-50 dark:bg-blue-950/30",
-        text: "text-blue-700 dark:text-blue-400",
-        dot: "bg-blue-500",
+        bg: "bg-primary-50 dark:bg-primary-950/30",
+        text: "text-primary-700 dark:text-primary-400",
+        dot: "bg-primary-500",
     },
     delivered: {
         label: "Entregue",

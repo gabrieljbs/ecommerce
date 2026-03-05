@@ -109,7 +109,7 @@ export default function PagSeguroPayment({ orderId, total, orderStatus, payerEma
                 </p>
                 <a
                     href={`/orders/${orderId}`}
-                    className="mt-2 inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors"
+                    className="mt-2 inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold transition-colors"
                 >
                     Ver Pedido
                 </a>
@@ -155,7 +155,7 @@ export default function PagSeguroPayment({ orderId, total, orderStatus, payerEma
                         <button
                             onClick={handleCopy}
                             className={`shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${copied
-                                ? "bg-emerald-500 text-white"
+                                ? "bg-primary-500 text-white"
                                 : "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90"
                                 }`}
                         >
@@ -228,7 +228,7 @@ export default function PagSeguroPayment({ orderId, total, orderStatus, payerEma
             <button
                 onClick={handleGerarPix}
                 disabled={stage === "loading"}
-                className="w-full max-w-sm flex items-center justify-center gap-3 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-lg shadow-lg shadow-emerald-200 dark:shadow-none transition-all active:scale-95 disabled:opacity-50"
+                className="w-full max-w-sm flex items-center justify-center gap-3 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-lg shadow-lg shadow-primary-200 dark:shadow-none transition-all active:scale-95 disabled:opacity-50"
             >
                 {stage === "loading" ? <Loader2 size={22} className="animate-spin" /> : <QrCode size={22} />}
                 Gerar Código PIX
